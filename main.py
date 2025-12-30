@@ -4,7 +4,7 @@ import joblib
 import numpy as np
 
 app = FastAPI()
-model = joblib.load("logistic_model.joblib") # Change to decision_tree_model.joblib for the 2nd repo
+model = joblib.load("logistic_model.joblib")
 
 @app.get("/", response_class=HTMLResponse)
 async def home():
@@ -18,4 +18,5 @@ async def predict(pclass: int = Form(...), sex: int = Form(...), age: float = Fo
     features = np.array([[pclass, sex, age, sibsp, parch, fare, embarked]])
     prediction = model.predict(features)[0]
     result = "Survived! 🎉" if prediction == 1 else "Did not survive 🛑"
+
     return {"prediction": result}
