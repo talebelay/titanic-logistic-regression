@@ -19,7 +19,6 @@
         }
         .serif-font { font-family: 'Playfair Display', serif; }
         
-        /* Subtle input styling matching Avencio/Closet Creations aesthetic */
         .input-minimal {
             background: transparent;
             border-bottom: 1px solid #d1d1d1;
@@ -44,47 +43,55 @@
             background: #333;
             transform: translateY(-1px);
         }
+        /* Style for the dynamic result box */
+        #resultBox {
+            transition: all 0.5s ease-in-out;
+            transform: scale(0.95);
+            opacity: 0;
+        }
+        #resultBox.visible {
+            transform: scale(1);
+            opacity: 1;
+        }
     </style>
 </head>
 <body class="min-h-screen selection:bg-black selection:text-white">
-    <!-- Minimal Navigation -->
     <nav class="p-8 flex justify-between items-center max-w-7xl mx-auto">
         <div class="text-sm font-bold tracking-widest uppercase">Titanic Analysis</div>
-        <div class="hidden md:flex gap-8 text-xs font-medium uppercase tracking-tighter">
-            <!-- Links removed -->
-        </div>
         <div class="text-xs font-bold border border-black px-4 py-2 rounded-full">1912 UNIT</div>
     </nav>
 
     <main class="max-w-5xl mx-auto px-6 pt-12 pb-24">
-        <!-- Hero Section -->
         <header class="mb-24">
             <h1 class="serif-font text-6xl md:text-8xl leading-[0.9] tracking-tight mb-8">
                 Optimal analysis <br>
                 <span class="italic">meets historical data</span>
             </h1>
             <p class="max-w-lg text-lg text-neutral-600 leading-relaxed">
-                A sophisticated machine learning tool designed to calculate the survival probability of passengers based on the 1912 Titanic manifest data.
+                A sophisticated machine learning tool designed to calculate survival probability based on the 1912 Titanic manifest data.
             </p>
         </header>
 
-        <!-- Prediction Section -->
         <section class="grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
             <div class="lg:col-span-4">
                 <div class="sticky top-12">
                     <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-neutral-400 block mb-4">The Methodology</span>
                     <h3 class="serif-font text-3xl mb-6">Structured for precision</h3>
                     <p class="text-sm text-neutral-500 leading-loose">
-                        Our model evaluates socio-economic status, demographic variables, and family connections to determine survivability with modern algorithmic accuracy.
+                        Our model evaluates socio-economic status and demographic variables to determine survivability with modern algorithmic accuracy.
                     </p>
                 </div>
             </div>
 
             <div class="lg:col-span-8">
                 <div class="card-outline p-8 md:p-12 rounded-[2rem]">
-                    <form action="/predict" method="post" class="space-y-12">
+                    <form id="predictionForm" class="space-y-12">
+                        <div id="resultBox" class="hidden mb-12 p-10 rounded-3xl text-center border border-black shadow-xl">
+                            <span class="text-[10px] font-bold uppercase tracking-[0.3em] text-neutral-500 block mb-4">Final Prediction</span>
+                            <h4 id="predictionText" class="serif-font text-4xl italic"></h4>
+                        </div>
+
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
-                            <!-- Ticket Class -->
                             <div class="flex flex-col gap-2">
                                 <label class="text-[10px] font-bold uppercase tracking-widest text-neutral-400">01. Class of Travel</label>
                                 <select name="pclass" class="input-minimal py-4 text-lg appearance-none cursor-pointer">
@@ -94,7 +101,6 @@
                                 </select>
                             </div>
 
-                            <!-- Gender -->
                             <div class="flex flex-col gap-2">
                                 <label class="text-[10px] font-bold uppercase tracking-widest text-neutral-400">02. Passenger Gender</label>
                                 <select name="sex" class="input-minimal py-4 text-lg appearance-none cursor-pointer">
@@ -103,32 +109,27 @@
                                 </select>
                             </div>
 
-                            <!-- Age -->
                             <div class="flex flex-col gap-2">
                                 <label class="text-[10px] font-bold uppercase tracking-widest text-neutral-400">03. Chronological Age</label>
                                 <input type="number" name="age" placeholder="Age" required class="input-minimal py-4 text-lg">
                             </div>
 
-                            <!-- Fare -->
                             <div class="flex flex-col gap-2">
                                 <label class="text-[10px] font-bold uppercase tracking-widest text-neutral-400">04. Fare Structure (GBP)</label>
                                 <input type="number" step="0.01" name="fare" placeholder="Fare Amount" required class="input-minimal py-4 text-lg">
                             </div>
 
-                            <!-- SibSp -->
                             <div class="flex flex-col gap-2">
-                                <label class="text-[10px] font-bold uppercase tracking-widest text-neutral-400">05. Family: Siblings/Spouse</label>
+                                <label class="text-[10px] font-bold uppercase tracking-widest text-neutral-400">05. Siblings/Spouse</label>
                                 <input type="number" name="sibsp" placeholder="Count" required class="input-minimal py-4 text-lg">
                             </div>
 
-                            <!-- Parch -->
                             <div class="flex flex-col gap-2">
-                                <label class="text-[10px] font-bold uppercase tracking-widest text-neutral-400">06. Family: Parents/Children</label>
+                                <label class="text-[10px] font-bold uppercase tracking-widest text-neutral-400">06. Parents/Children</label>
                                 <input type="number" name="parch" placeholder="Count" required class="input-minimal py-4 text-lg">
                             </div>
                         </div>
 
-                        <!-- Embarked -->
                         <div class="flex flex-col gap-2">
                             <label class="text-[10px] font-bold uppercase tracking-widest text-neutral-400">07. Port of Departure</label>
                             <select name="embarked" class="input-minimal py-4 text-lg appearance-none cursor-pointer">
@@ -138,14 +139,10 @@
                             </select>
                         </div>
 
-                        <!-- Action -->
                         <div class="pt-8">
-                            <button type="submit" class="btn-premium w-full py-6 rounded-full text-sm font-bold uppercase tracking-[0.2em]">
+                            <button type="submit" id="submitBtn" class="btn-premium w-full py-6 rounded-full text-sm font-bold uppercase tracking-[0.2em]">
                                 Generate Survival Profile
                             </button>
-                            <p class="text-center text-[10px] text-neutral-400 mt-6 uppercase tracking-widest">
-                                Processing historical data manifest 1912-A
-                            </p>
                         </div>
                     </form>
                 </div>
@@ -153,12 +150,47 @@
         </section>
     </main>
 
-    <footer class="border-t border-neutral-200 py-12 px-8">
-        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
-            <div class="text-[10px] font-bold uppercase tracking-widest">© Titanic Predictive Systems</div>
-            <div class="flex gap-8 text-[10px] font-bold uppercase tracking-widest">
-            </div>
-        </div>
-    </footer>
+    <script>
+        const form = document.getElementById('predictionForm');
+        const resultBox = document.getElementById('resultBox');
+        const predictionText = document.getElementById('predictionText');
+        const submitBtn = document.getElementById('submitBtn');
+
+        form.onsubmit = async (e) => {
+            e.preventDefault();
+            
+            // UI Feedback
+            submitBtn.innerText = "Processing Manifest...";
+            submitBtn.disabled = true;
+
+            const formData = new FormData(form);
+            try {
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+
+                // Show and style result
+                resultBox.classList.remove('hidden');
+                setTimeout(() => resultBox.classList.add('visible'), 10);
+                
+                predictionText.innerText = data.prediction;
+                
+                if (data.prediction.includes("Survived")) {
+                    resultBox.style.backgroundColor = "#ecfdf5"; // Success green
+                    resultBox.style.borderColor = "#10b981";
+                } else {
+                    resultBox.style.backgroundColor = "#fef2f2"; // Error red
+                    resultBox.style.borderColor = "#ef4444";
+                }
+            } catch (error) {
+                console.error("Error:", error);
+            } finally {
+                submitBtn.innerText = "Generate Survival Profile";
+                submitBtn.disabled = false;
+            }
+        };
+    </script>
 </body>
 </html>
