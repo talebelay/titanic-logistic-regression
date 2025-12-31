@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Titanic Survival Predictor</title>
+    <title>Titanic Survival Predictor | Logistic Regression</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
     <style>
@@ -43,14 +43,14 @@
             background: #333;
             transform: translateY(-1px);
         }
-        /* Style for the dynamic result box */
+
         #resultBox {
             transition: all 0.5s ease-in-out;
-            transform: scale(0.95);
+            transform: translateY(20px);
             opacity: 0;
         }
         #resultBox.visible {
-            transform: scale(1);
+            transform: translateY(0);
             opacity: 1;
         }
     </style>
@@ -58,7 +58,7 @@
 <body class="min-h-screen selection:bg-black selection:text-white">
     <nav class="p-8 flex justify-between items-center max-w-7xl mx-auto">
         <div class="text-sm font-bold tracking-widest uppercase">Titanic Analysis</div>
-        <div class="text-xs font-bold border border-black px-4 py-2 rounded-full">1912 UNIT</div>
+        <div class="text-xs font-bold border border-black px-4 py-2 rounded-full">LOGISTIC REGRESSION</div>
     </nav>
 
     <main class="max-w-5xl mx-auto px-6 pt-12 pb-24">
@@ -68,7 +68,7 @@
                 <span class="italic">meets historical data</span>
             </h1>
             <p class="max-w-lg text-lg text-neutral-600 leading-relaxed">
-                A sophisticated machine learning tool designed to calculate survival probability based on the 1912 Titanic manifest data.
+                Utilizing Logistic Regression to determine survival outcomes through linear probability modeling.
             </p>
         </header>
 
@@ -76,9 +76,9 @@
             <div class="lg:col-span-4">
                 <div class="sticky top-12">
                     <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-neutral-400 block mb-4">The Methodology</span>
-                    <h3 class="serif-font text-3xl mb-6">Structured for precision</h3>
+                    <h3 class="serif-font text-3xl mb-6">Linear Probability</h3>
                     <p class="text-sm text-neutral-500 leading-loose">
-                        Our model evaluates socio-economic status and demographic variables to determine survivability with modern algorithmic accuracy.
+                        This model calculates weights for each passenger attribute to establish a survival threshold based on the 1912 manifest.
                     </p>
                 </div>
             </div>
@@ -86,11 +86,6 @@
             <div class="lg:col-span-8">
                 <div class="card-outline p-8 md:p-12 rounded-[2rem]">
                     <form id="predictionForm" class="space-y-12">
-                        <div id="resultBox" class="hidden mb-12 p-10 rounded-3xl text-center border border-black shadow-xl">
-                            <span class="text-[10px] font-bold uppercase tracking-[0.3em] text-neutral-500 block mb-4">Final Prediction</span>
-                            <h4 id="predictionText" class="serif-font text-4xl italic"></h4>
-                        </div>
-
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
                             <div class="flex flex-col gap-2">
                                 <label class="text-[10px] font-bold uppercase tracking-widest text-neutral-400">01. Class of Travel</label>
@@ -144,6 +139,15 @@
                                 Generate Survival Profile
                             </button>
                         </div>
+
+                        <div id="resultBox" class="hidden mt-12 p-10 rounded-3xl text-center border border-black shadow-xl">
+                            <span class="text-[10px] font-bold uppercase tracking-[0.3em] text-neutral-500 block mb-2">Analysis Result</span>
+                            <h4 id="predictionText" class="serif-font text-4xl italic mb-4"></h4>
+                            <div class="h-[1px] w-12 bg-black mx-auto mb-4"></div>
+                            <p class="text-[10px] uppercase tracking-widest text-neutral-500">
+                                Confidence Score: <span id="confidenceText" class="font-bold text-black"></span>
+                            </p>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -154,12 +158,11 @@
         const form = document.getElementById('predictionForm');
         const resultBox = document.getElementById('resultBox');
         const predictionText = document.getElementById('predictionText');
+        const confidenceText = document.getElementById('confidenceText');
         const submitBtn = document.getElementById('submitBtn');
 
         form.onsubmit = async (e) => {
             e.preventDefault();
-            
-            // UI Feedback
             submitBtn.innerText = "Processing Manifest...";
             submitBtn.disabled = true;
 
@@ -171,17 +174,17 @@
                 });
                 const data = await response.json();
 
-                // Show and style result
                 resultBox.classList.remove('hidden');
                 setTimeout(() => resultBox.classList.add('visible'), 10);
                 
                 predictionText.innerText = data.prediction;
+                confidenceText.innerText = data.confidence;
                 
-                if (data.prediction.includes("Survived")) {
-                    resultBox.style.backgroundColor = "#ecfdf5"; // Success green
+                if (data.prediction === "Survived") {
+                    resultBox.style.backgroundColor = "#ecfdf5"; 
                     resultBox.style.borderColor = "#10b981";
                 } else {
-                    resultBox.style.backgroundColor = "#fef2f2"; // Error red
+                    resultBox.style.backgroundColor = "#fef2f2"; 
                     resultBox.style.borderColor = "#ef4444";
                 }
             } catch (error) {
